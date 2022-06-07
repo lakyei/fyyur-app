@@ -25,7 +25,7 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 
 # TODO: connect to a local postgresql database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/fyyurdb'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5432/fyyurdb'
 
 migrate = Migrate(app, db)
 
@@ -460,20 +460,14 @@ def create_artist_submission():
     )
     db.session.add(new_artist)
     db.session.commit()
+    flash(request.form['name'] + ' was successfully listed!')
   except:
     error = True
     db.session.rollback()
     print(sys.exc_info())
+    flash('An error occurred.' + request.form['name'] + ' could not be listed.')
   finally:
     db.session.close()
-
-  # on successful db insert, flash success
-  if not error:
-    flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  
-  # TODO: on unsuccessful db insert, flash an error instead.
-  else:
-    flash('An error occurred. Artist ' + request.form['name'] + ' could not be listed.')
   
   return render_template('pages/home.html')
 
